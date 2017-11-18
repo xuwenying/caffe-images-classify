@@ -1,0 +1,129 @@
+## Refer to http://caffe.berkeleyvision.org/installation.html
+# Contributions simplifying and improving our build system are welcome!
+
+# cuDNN acceleration switch (uncomment to build with cuDNN).
+# USE_CUDNN := 1
+"CuDNN是NVIDIA专门针对Deep Learning框架设计的一套GPU计算加速库，用于实现高性能的并行计算,在有GPU并且安装CuDNN的情况下可以打开即将注释去掉。"
+
+# CPU-only switch (uncomment to build without GPU support).
+#CPU_ONLY := 1
+"表示是否用GPU,如果只有CPU这里要打开"
+
+# uncomment to disable IO dependencies and corresponding data layers
+USE_OPENCV := 1
+"因为要用到OpenCV库所以要打开，下面这两个选项表示是选择Caffe的数据管理第三方库，两者都不打开 Caffe默认用的是LMDB，这两者均是嵌入式数据库管理系统编程库。"
+# USE_LEVELDB := 0
+# USE_LMDB := 0
+
+# uncomment to allow MDB_NOLOCK when reading LMDB files (only if necessary)
+#   You should not set this flag if you will be reading LMDBs with any
+#   possibility of simultaneous read and write
+# ALLOW_LMDB_NOLOCK := 1
+"当需要读取LMDB文件时可以取消注释，默认不打开。"
+
+# Uncomment if you're using OpenCV 3
+OPENCV_VERSION := 2.4.10
+"用pkg-config --modversion opencv命令查看opencv版本"
+
+# To customize your choice of compiler, uncomment and set the following.
+# N.B. the default for Linux is g++ and the default for OSX is clang++
+# CUSTOM_CXX := g++
+"linux系统默认使用g++编译器，OSX则是clang++。"
+
+# CUDA directory contains bin/ and lib/ directories that we need.
+CUDA_DIR := /usr/local/cuda
+"CUDA的安装目录"
+# On Ubuntu 14.04, if cuda tools are installed via
+# "sudo apt-get install nvidia-cuda-toolkit" then use this instead:
+# CUDA_DIR := /usr
+
+# CUDA architecture setting: going with all of them.
+# For CUDA < 6.0, comment the *_50 lines for compatibility.
+CUDA_ARCH := -gencode arch=compute_20,code=sm_20 \
+        -gencode arch=compute_20,code=sm_21 \
+        -gencode arch=compute_30,code=sm_30 \
+        -gencode arch=compute_35,code=sm_35 \
+        -gencode arch=compute_50,code=sm_50 \
+        -gencode arch=compute_50,code=compute_50
+"这些参数需要根据GPU的计算能力
+(http://blog.csdn.net/jiajunlee/article/details/52067962)来进行设置，6.0以下的版本不支持×_50的计算能力。"
+
+# BLAS choice:
+# atlas for ATLAS (default)
+# mkl for MKL
+# open for OpenBlas
+BLAS := open
+"如果用的是ATLAS计算库则赋值atlas，MKL计算库则用mkl赋值，OpenBlas则赋值open。"
+
+# Custom (MKL/ATLAS/OpenBLAS) include and lib directories.
+# Leave commented to accept the defaults for your choice of BLAS
+# (which should work)!
+BLAS_INCLUDE := /usr/local/OpenBlas/include
+BLAS_LIB := /usr/local/OpenBlas/lib
+"blas库安装目录"
+
+# Homebrew puts openblas in a directory that is not on the standard search path
+# BLAS_INCLUDE := $(shell brew --prefix openblas)/include
+# BLAS_LIB := $(shell brew --prefix openblas)/lib
+"如果不是安装在标准路径则要指明"
+
+# This is required only if you will compile the matlab interface.
+# MATLAB directory should contain the mex binary in /bin.
+# MATLAB_DIR := /usr/local
+# MATLAB_DIR := /Applications/MATLAB_R2012b.app
+"matlab安装库的目录"
+
+# NOTE: this is required only if you will compile the python interface.
+# We need to be able to find Python.h and numpy/arrayobject.h.
+PYTHON_INCLUDE := /usr/include/python2.7 \
+        /usr/lib/python2.7/dist-packages/numpy/core/include
+"python安装目录"
+# Anaconda Python distribution is quite popular. Include path:
+# Verify anaconda location, sometimes it's in root.
+# ANACONDA_HOME := $(HOME)/anaconda
+# PYTHON_INCLUDE := $(ANACONDA_HOME)/include \
+        # $(ANACONDA_HOME)/include/python2.7 \
+        # $(ANACONDA_HOME)/lib/python2.7/site-packages/numpy/core/include \
+
+# Uncomment to use Python 3 (default is Python 2)
+# PYTHON_LIBRARIES := boost_python3 python3.5m
+# PYTHON_INCLUDE := /usr/include/python3.5m \
+#                 /usr/lib/python3.5/dist-packages/numpy/core/include
+
+# We need to be able to find libpythonX.X.so or .dylib.
+PYTHON_LIB := /usr/lib
+<font color="green">python库位置</font>
+# PYTHON_LIB := $(ANACONDA_HOME)/lib
+
+# Homebrew installs numpy in a non standard path (keg only)
+# PYTHON_INCLUDE += $(dir $(shell python -c 'import numpy.core; print(numpy.core.__file__)'))/include
+# PYTHON_LIB += $(shell brew --prefix numpy)/lib
+
+# Uncomment to support layers written in Python (will link against Python libs)
+WITH_PYTHON_LAYER := 1
+
+# Whatever else you find you need goes here.
+INCLUDE_DIRS := $(PYTHON_INCLUDE) /usr/local/include
+LIBRARY_DIRS := $(PYTHON_LIB) /usr/local/lib /usr/lib
+
+# If Homebrew is installed at a non standard location (for example your home directory) and you use it for general dependencies
+# INCLUDE_DIRS += $(shell brew --prefix)/include
+# LIBRARY_DIRS += $(shell brew --prefix)/lib
+
+# Uncomment to use `pkg-config` to specify OpenCV library paths.
+# (Usually not necessary -- OpenCV libraries are normally installed in one of the above $LIBRARY_DIRS.)
+# USE_PKG_CONFIG := 1
+
+# N.B. both build and distribute dirs are cleared on `make clean`
+BUILD_DIR := build
+DISTRIBUTE_DIR := distribute
+
+# Uncomment for debugging. Does not work on OSX due to https://github.com/BVLC/caffe/issues/171
+# DEBUG := 1
+
+# The ID of the GPU that 'make runtest' will use to run unit tests.
+TEST_GPUID := 0
+"所用的GPU的ID编号"
+
+# enable pretty build (comment to see full commands)
+Q ?= @
